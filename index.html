@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安全上传GitHub</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#111827;color:#fff;padding:20px}
+.box{max-width:600px;margin:0 auto;background:#1f2937;padding:24px;border-radius:12px}
+input,button{width:100%;padding:10px;margin:8px 0;border-radius:6px;border:none}
+button{background:#2563eb;color:#fff;font-size:16px}
+#log{background:#000;padding:12px;margin-top:12px;border-radius:6px;font-size:12px;min-height:120px;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="box">
+    <h2>安全上传文件到GitHub</h2>
+    <p>✅前端无令牌，可以部署到GitHub Pages</p>
+    <br>
+    <input type="text" id="savePath" placeholder="仓库保存路径，如 upload/pic.jpg" value="upload/file.bin">
+    <input type="file" id="fileInput">
+    <button onclick="upload()">上传</button>
+    <div id="log"></div>
+</div>
+
+<script>
+const logDom = document.getElementById("log");
+// 修改为你运行server.py设备的局域网IP:8080
+const BACKEND_URL = "http://127.0.0.1:8080";
+
+function log(txt){
+    logDom.innerText += txt + "\n";
+    logDom.scrollTop = logDom.scrollHeight;
+}
+
+async function upload(){
+    const path = document.getElementById("savePath").value.trim();
+    const file = document.getElementById("fileInput").files[0];
+    if(!path||!file){
+        log("请选择文件并填写保存路径");
+        return;
+    }
+    log("正在上传到后端...");
+    const fd = new FormData();
+    fd.append("file",file);
+    fd.append("path",path);
+    try{
+        const res = await fetch(`${BACKEND_URL}/upload`,{
+            method:"POST",
+            body:fd
+        })
+        const data = await res.json();
+        log(JSON.stringify(data,null,2));
+    }catch(err){
+        log("错误："+err.message);
+    }
+}
+</script>
+</body>
+</html>
