@@ -3,63 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404 页面走失啦</title>
+<title>探照灯特效 - 密码验证</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
+*{margin:0;padding:0;box-sizing:border-box;}
 body{
-    min-height:100vh;
-    background:#111827;
-    color:#fff;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
+  height:100vh;
+  background:#111;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-@keyframes shake {
-  0% {transform: rotate(-2deg);}
-  50% {transform: rotate(2deg);}
-  100% {transform: rotate(-2deg);}
+/* 密码弹窗样式 */
+.login-box{
+  background:#222;
+  padding:30px;
+  border-radius:14px;
+  text-align:center;
+  color:white;
 }
-.shake-text{
-    font-size:8rem;
-    font-weight:bold;
-    color:#f87171;
-    animation: shake 0.3s infinite;
+.login-box input{
+  display:block;
+  width:240px;
+  margin:10px auto;
+  padding:10px;
+  font-size:16px;
 }
-.desc{
-    font-size:22px;
-    margin:16px 0 8px;
-    color:#d1d5db;
+.login-box button{
+  padding:10px 20px;
+  margin-top:8px;
+  font-size:16px;
+  cursor:pointer;
 }
-.tip{
-    color:#9ca3af;
-    margin-bottom:32px;
+/* 探照灯页面，默认隐藏 */
+.main-page{
+  display:none;
+  width:100%;
+  height:100%;
+  align-items:center;
+  justify-content:center;
 }
-.home-btn{
-    padding:12px 24px;
-    background:#3b82f6;
-    color:white;
-    border:none;
-    border-radius:10px;
-    font-size:18px;
-    cursor:pointer;
-    text-decoration:none;
+.content{
+  font-size:40px;
+  color:#fff;
+  text-align:center;
+  line-height:1.6;
 }
-.home-btn:hover{
-    background:#2563eb;
-}
-.cat{
-    font-size:60px;
-    margin-bottom:20px;
+.mask{
+  position:fixed;
+  inset:0;
+  background:#000;
+  pointer-events:none;
+  mask:radial-gradient(circle 120px at var(--x) var(--y), transparent 0%, black 100%);
+  -webkit-mask:radial-gradient(circle 120px at var(--x) var(--y), transparent 0%, black 100%);
 }
 </style>
 </head>
 <body>
-<div class="cat">🐱</div>
-<div class="shake-text">404</div>
-<div class="desc">糟糕！页面跑丢了</div>
-<div class="tip">这个地址不存在，小猫找不到它啦</div>
-<a href="/" class="home-btn">返回首页</a>
+<!-- 密码登录框 -->
+<div class="login-box" id="login">
+  <h2>🔐 请输入账号密码</h2>
+  <input type="text" id="user" placeholder="账号">
+  <input type="password" id="pwd" placeholder="密码">
+  <button onclick="checkLogin()">进入</button>
+</div>
+
+<!-- 探照灯页面，验证成功才显示 -->
+<div class="main-page" id="page">
+  <div class="content">
+赖泽盛是gay<br>
+赖泽盛傻逼  </div>
+  <div class="mask"></div>
+</div>
+
+<script>
+// =========设置你的账号密码，下面会自动转base64=========
+const rawUser = "admin";
+const rawPwd = "lzsisgay";
+// ======================================================
+const USER_B64 = btoa(rawUser);
+const PWD_B64 = btoa(rawPwd);
+
+function checkLogin(){
+  const inputUser = document.getElementById("user").value;
+  const inputPwd = document.getElementById("pwd").value;
+  if(btoa(inputUser) === USER_B64 && btoa(inputPwd) === PWD_B64){
+    // 验证成功：隐藏登录框，显示探照灯页面
+    document.getElementById("login").style.display = "none";
+    document.getElementById("page").style.display = "flex";
+  }else{
+    alert("账号或密码错误！");
+  }
+}
+
+//探照灯跟随鼠标
+const mask = document.querySelector('.mask');
+document.addEventListener('mousemove',e=>{
+  if(mask){
+    mask.style.setProperty('--x',e.clientX+'px');
+    mask.style.setProperty('--y',e.clientY+'px');
+  }
+})
+</script>
 </body>
 </html>
